@@ -88,6 +88,32 @@ null return > chunk 반복의 끝
 --- flatFileItemReader
 스프링 제공 csv 파일 리더
 
+--- jdbc item reader : 커서와 페이징 차이 염두
+
+jdbc resultset : java cursor 유사
+    커서 이동하며 데이터 읽어 옴
+아이템 스트림 인터페이스 - 오픈 업데이트 클로즈 등 스트림 
+jdcc 아이템 리더에서 스트림 인터페이스 활용 - 오픈 업데이트 클로즈
+    업데이트 매서드 종료 = null 리턴
+커서 기반 
+    커넥션 연결 시간이 길어진다는 단점
+    하나의 커넥션 스레드 언세이프
+    더 많은 메모리 필요
+페이지 기반
+    커넥션 시간 짧은, 커넥션 연결 리소스 소모
+    스레드 세이프
+    적은 메모리
+아이템 리더 두가지
+    쿼리프로바이더 스트링이 아닌 객체로 쿼리를 설정 가능
+    jdbcCursorItemReader 
+    jdbcPagingItemReader
+        fetch-한번에 가져올 커서 사이즈 설정 가, 이 자체가 커서로 동작하는 것은 아니고 jdbcTemplate.fetchSize 가 커서 처럼 동작하는 것임
+        page size 설정은 mysql.offset 설정과 유사
+작업 : 아이템 리더 라이터 > 스텝 > 잡
+
+
+
+
 
 
 

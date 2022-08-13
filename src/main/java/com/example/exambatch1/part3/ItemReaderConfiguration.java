@@ -7,8 +7,24 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JpaCursorItemReader;
+import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @Slf4j
@@ -97,6 +113,7 @@ public class ItemReaderConfiguration {
     private JpaCursorItemReader<Person> jpaCursorItemReader() throws Exception {
         JpaCursorItemReader<Person> itemReader = new JpaCursorItemReaderBuilder<Person>()
                 .name("jpaCursorItemReader")
+//                .dataSource(dataSource)
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("select p from Person p")
                 .build();
@@ -108,10 +125,11 @@ public class ItemReaderConfiguration {
     private JdbcCursorItemReader<Person> jdbcCursorItemReader() throws Exception {
         JdbcCursorItemReader<Person> itemReader = new JdbcCursorItemReaderBuilder<Person>()
                 .name("jdbcCursorItemReader")
-                .dataSource(dataSource)
+                                .dataSource(dataSource)
                 .sql("select id, name, age, address from person")
                 .rowMapper((rs, rowNum) -> new Person(
                         rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)))
+//                아이템 순서, 컬럼 순서 1부터 시작
                 .build();
         itemReader.afterPropertiesSet();
         return itemReader;
@@ -154,11 +172,9 @@ public class ItemReaderConfiguration {
 
     private List<Person> getItems() {
         List<Person> items = new ArrayList<>();
-
         for (int i = 0; i < 10; i++) {
             items.add(new Person(i + 1, "test name" + i, "test age", "test address"));
         }
-
         return items;
     }
 }

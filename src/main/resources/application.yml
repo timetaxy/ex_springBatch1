@@ -9,3 +9,6 @@ spring:
     username: lsh
     password: 1111
     driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      data-locations: classpath:person.sql
