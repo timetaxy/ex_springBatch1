@@ -9,8 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Objects;
 
-@Entity
-@NoArgsConstructor
+@Entity //jpa
+@NoArgsConstructor //jpa
 @Getter
 public class Person {
 

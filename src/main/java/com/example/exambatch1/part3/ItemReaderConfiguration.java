@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @Slf4j
+@RequiredArgsConstructor
 public class ItemReaderConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
@@ -35,16 +36,16 @@ public class ItemReaderConfiguration {
     private final DataSource dataSource;
     private final EntityManagerFactory entityManagerFactory;
 
-    public ItemReaderConfiguration(JobBuilderFactory jobBuilderFactory,
-                                   StepBuilderFactory stepBuilderFactory,
-                                   DataSource dataSource,
-                                   EntityManagerFactory entityManagerFactory) {
-
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-        this.dataSource = dataSource;
-        this.entityManagerFactory = entityManagerFactory;
-    }
+//    public ItemReaderConfiguration(JobBuilderFactory jobBuilderFactory,
+//                                   StepBuilderFactory stepBuilderFactory,
+//                                   DataSource dataSource,
+//                                   EntityManagerFactory entityManagerFactory) {
+//
+//        this.jobBuilderFactory = jobBuilderFactory;
+//        this.stepBuilderFactory = stepBuilderFactory;
+//        this.dataSource = dataSource;
+//        this.entityManagerFactory = entityManagerFactory;
+//    }
 
 //    단순 커스텀 리더 (기본제공 리스트리더와 동일)
 //    @Bean
@@ -113,9 +114,9 @@ public class ItemReaderConfiguration {
     private JpaCursorItemReader<Person> jpaCursorItemReader() throws Exception {
         JpaCursorItemReader<Person> itemReader = new JpaCursorItemReaderBuilder<Person>()
                 .name("jpaCursorItemReader")
-//                .dataSource(dataSource)
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("select p from Person p")
+                //jpa 쿼리는 jpql 쿼리
                 .build();
         itemReader.afterPropertiesSet();
 

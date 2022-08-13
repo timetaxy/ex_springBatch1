@@ -1,9 +1,10 @@
-create table person (
-    id bigint primary key auto_increment,
-    name varchar(255),
-    age varchar(255),
-    address varchar(255)
-);
+-- create table person (
+--     id bigint primary key auto_increment,
+--     name varchar(255),
+--     age varchar(255),
+--     address varchar(255)
+-- );
+-- jpa 에서 생성 해 줌
 
 insert into person(name, age, address)
 values('이경원','32','인천');
