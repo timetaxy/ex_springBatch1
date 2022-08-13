@@ -54,6 +54,7 @@ public class ItemWriterConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .start(this.csvItemWriterStep())
 //                .next(this.jdbcBatchItemWriterStep())
+//                jpawriter와 기능상 동일
                 .next(this.jpaItemWriterStep())
                 .build();
     }
@@ -89,6 +90,9 @@ public class ItemWriterConfiguration {
         JpaItemWriter<Person> itemWriter = new JpaItemWriterBuilder<Person>()
                 .entityManagerFactory(entityManagerFactory)
 //                .usePersist(true)
+//                EntityManager.Persist 사용하기 (수정대상인지 체크 select 쿼리 안함)
+//                persisttance exception 주의 ex) id auto gen 등
+                // private List<Person> getItems() { 에서 id 미입력시 자동으로 insert 로 인식, select 하지 않음(update 대상인지 확인 하지 않음), usePersist 불필요
                 .build();
 
         itemWriter.afterPropertiesSet();
@@ -99,6 +103,7 @@ public class ItemWriterConfiguration {
         JdbcBatchItemWriter<Person> itemWriter = new JdbcBatchItemWriterBuilder<Person>()
                 .dataSource(dataSource)
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+//클래스를 파라미터로 자동으로 생성해주는 provider
                 .sql("insert into person(name, age, address) values(:name, :age, :address)")
                 .build();
 
@@ -121,7 +126,7 @@ public class ItemWriterConfiguration {
                 .resource(new FileSystemResource("output/test-output.csv"))
                 .lineAggregator(lineAggregator)//매핑 설정
                 .headerCallback(writer -> writer.write("id,이름,나이,거주지"))
-                .footerCallback(writer -> writer.write("-------------------\n"))//개행 문자 주의
+                .footerCallback(writer -> writer.write("-------------------\n"))//개행 문자 주
                 .append(true)//추가 내용 append 설정
                 .build();
 

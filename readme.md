@@ -120,11 +120,41 @@ entityManagerFactory - jpa 실행위해 entity manager가 필요
 아이템 프로세서는 리더 라이터 보다 단순, 프로세서는 필수 아님
     정크에서는 아이템 라이터가 필수
 
---- 아이템 라이터
+---file 아이템 라이터
 이미 구현된 구현체 있음
 인풋타입은 아이템리더에서 리턴 > 프로세서 > 리스트를 라이터로 전달
     interface ItemWriter 의 writer 인풋이 List 인 이유
 100까지 for 100.for
+
+---jdbc 아이템 라이터
+이름 jdbcBatchItemWriter
+bulk insert 쿼리를 실행
+    insert into aa (a,b,c) values (1,2,3), (4,5,6);
+mysql 연결 url 에서
+    rewriteBatchedStatements=true //bulk 인서트 위한 옵션
+    jpa.hibernate.ddl-auto:update //운영에서는 none
+active profile 로 properties 파일 선택
+
+                EntityManager.Persist 사용하기 (수정대상인지 체크 select 쿼리 안함)
+                persisttance exception 주의 ex) id auto gen 등
+id 입력시 이미 있는데이터라 판단, update 하기 위해 select 쿼리 실행 됨
+id 인서트시 입력 안하게 하면 insert 쿼리 실행 안 됨
+
+id 직접 할당시 > usePersist(true)
+id 직접 할당 안할 시 > usePersist 불필요
+
+--- item processor
+프로세스, 필터
+리턴 null 은 해당 데이터는 writer에서 처리하지 않겠다는 것
+
+allow_duplicate=true 모든 input 이 리턴 됨 - 중복체크 안 함
+allow_duplicate=false 또는 null - 중복체크
+    중복체크는 map 사용
+
+chunk에서 item writer에 하나만 가능
+2가지 필요시 - db, log 는
+compositeItemWriter
+
 
 
 

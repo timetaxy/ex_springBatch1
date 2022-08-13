@@ -6,6 +6,8 @@
 -- );
 -- jpa 에서 생성 해 줌
 
+-- delete from person;
+
 insert into person(name, age, address)
 values('이경원','32','인천');
 insert into person(name, age, address)
