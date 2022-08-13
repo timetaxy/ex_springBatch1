@@ -49,6 +49,36 @@ active profiles 에 매개 변수가
 job 끼리는 공유 됨
 step 끼리는 공유 안 
 
+--- chunk
+chunk base 잡에서는 itemreader가 null 리턴할 때까지 반복
+chunk size : itemWriter output list size
+
+스프링 기본 스코프 싱글톤
+생성 소멸
+잡스코프-잡의 실행 종료, step에 선언
+스텝스코프- 스템 실행 종료, tasklet, chunk(item reader processor writer) 에 선언
+
+스코프 사용시
+하위 itemwriter 등은 모두 @Bean 처리 되어야 함
+
+같은 어노테이션
+@Scope("job") = @JobScope
+@Scope("step") = @StepScope
+
+왜 스콥을 설정?
+예 - 여러스텝에서 하나의 태스크렛 동시 엑세스시 스레드 세이
+스프링익스프레션으로 파라메터 접근시, 라이프싸이클 관리되고 있어야 가능
+
+--- itemReader
+아이템리더를 구현
+스프링 제공 파일, 데이터베이스 리더
+
+ItemStream 내부 보면
+ExecutionContext 파람, 아이템 스트림 구현체들이 상태를 관리 한다는 것
+
+
+
+
 
 
 
