@@ -66,6 +66,7 @@ public class ChunkProcessingConfiguration {
     @JobScope
     public Step chunkBaseStep(@Value("#{jobParameters[chunkSize]}") String chunkSize) {
         return stepBuilderFactory.get("chunkBaseStep")
+//                인풋 아웃풋
                 .<String, String>chunk(StringUtils.isNotEmpty(chunkSize) ? Integer.parseInt(chunkSize) : 10)
                 .reader(itemReader())
                 .processor(itemProcessor())

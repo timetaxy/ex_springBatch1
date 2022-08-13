@@ -69,12 +69,24 @@ chunk size : itemWriter output list size
 예 - 여러스텝에서 하나의 태스크렛 동시 엑세스시 스레드 세이
 스프링익스프레션으로 파라메터 접근시, 라이프싸이클 관리되고 있어야 가능
 
+스텝에서
+//               <type, type> 은 인풋 아웃풋
+.<String, String>chunk(StringUtils.isNotEmpty(chunkSize) ? Integer.parseInt(chunkSize) : 10)
 --- itemReader
 아이템리더를 구현
 스프링 제공 파일, 데이터베이스 리더
 
 ItemStream 내부 보면
 ExecutionContext 파람, 아이템 스트림 구현체들이 상태를 관리 한다는 것
+
+---
+템플릿 생성(job, step 까지)
+
+--- reader
+null return > chunk 반복의 끝
+
+--- flatFileItemReader
+스프링 제공 csv 파일 리더
 
 
 
