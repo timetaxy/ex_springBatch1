@@ -153,14 +153,30 @@ allow_duplicate=false 또는 null - 중복체크
 
 chunk에서 item writer에 하나만 가능
 2가지 필요시 - db, log 는
-compositeItemWriter
+compositeItemWriter -- 한개씩 생성 후 순서대로 동작하도록
+    순서나 중복 주의 해야 함
 
+--- duplicatiion validate
+//키풀에 존재하는 키인지 확, 존재하면 중복이므로 null 리턴
+if (keyPool.containsKey(key)) {
+return null;
+}
 
+---
+스텝에 @JobScope // 잡파라메터를 스텝에서 이용하려면 필요
 
+--- test
+jobLauncher 는 job 실행
+jobLauncherTestU
 
+이전 데이터 삭제하기
+@After
+public void tearDown() throws Exception {
+personRepository.deleteAll();
+}
 
-
-
+allowDuprication null = false
+@SpringBatchTest //jobScope이 테스트코드에서 동작하게
 
 
 
