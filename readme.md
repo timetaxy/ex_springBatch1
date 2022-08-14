@@ -208,6 +208,19 @@ private Level level = level.NORMAL;
 
 # 신규 prj 참고 : 4.2
 
+# 테스트 필요 요소
+@SpringBatchTest
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {UserConfiguration.class, TestConfiguration.class}) //테스트 대상과 테스트 config
+public class ParallelUserConfigurationTest {
+
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
+
+//이슈 : 배치 시간이 다음날 까지 걸치게 될 경우 (시작과 종료)
+
+
+
 
 
 
