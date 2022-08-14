@@ -219,8 +219,11 @@ public class ParallelUserConfigurationTest {
 
 //이슈 : 배치 시간이 다음날 까지 걸치게 될 경우 (시작과 종료)
 
+@Builder 는 NoArgsConstructor, AllArgsConstructor 와 같이
 
+@JoinColumn(클래스 기준 n에 해당하는 클래스 필드) 없을 경우 연관관계 테이블 추가 생성 됨
 
+writer의 파일생성은 chunk당이 아니라 step 당 실행
 
 
 
