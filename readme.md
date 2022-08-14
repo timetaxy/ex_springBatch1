@@ -201,6 +201,16 @@ public class NotFoundNameException extends RuntimeException {
 재시도시 성공할 여지가 있을 때 사용
 retryListener open > true > retryListener callback > error > retryListener onError
 
+--- part4
+entity enum 설정
+@Enumerated(EnumType.STRING)
+private Level level = level.NORMAL;
+
+# 신규 prj 참고 : 4.2
+
+
+
+
 
 -- 진행
 fc 2-4 04:15
