@@ -225,6 +225,13 @@ public class ParallelUserConfigurationTest {
 
 writer의 파일생성은 chunk당이 아니라 step 당 실행
 
+--- decider
+
+코드설명
+job 실행하면서 start 매서드 설정된 step이 차례로 실행 된다
+JobParameterDecide 의 decide 매서드 통해 해당 조건에 따라 FlowExecutionStatus 가 리턴
+    complete > 끝
+    continue > 다음 .to 가 실행 됨
 
 
 
