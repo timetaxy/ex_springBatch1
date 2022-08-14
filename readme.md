@@ -178,9 +178,28 @@ personRepository.deleteAll();
 allowDuprication null = false
 @SpringBatchTest //jobScope이 테스트코드에서 동작하게
 
+--- 리스너
+전후 실행 = 컨트롤러 전후의 인터셉터 유사
+구현방법
+    방법1. 인터페이스
+    방법2. 어노테이션 사용
 
+step 관련 모든 리스너는 stepListener를 상속
 
+--- 스킵
+스텝 예외처리
+익셉션 허용 횟수 지정 가능 > status exit code complete
+    chunk 단위로 트랜잭셔널하게 처리
+    배치생성시 중복처리되지 않도록 고려해야 함
 
+익셉션 간단하게는
+public class NotFoundNameException extends RuntimeException {
+
+배치상태보기 batch_step_execution
+
+--- retry
+재시도시 성공할 여지가 있을 때 사용
+retryListener open > true > retryListener callback > error > retryListener onError
 
 
 -- 진행

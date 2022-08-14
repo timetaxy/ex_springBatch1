@@ -1,5 +1,6 @@
 package com.example.exambatch1.part3;
 
+import com.example.exambatch1.TestConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Test;

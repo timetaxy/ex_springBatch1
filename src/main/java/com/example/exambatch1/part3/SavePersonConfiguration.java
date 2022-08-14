@@ -64,7 +64,7 @@ public class SavePersonConfiguration {
                 .processor(itemProcessor(allowDuplicate))
                 .writer(itemWriter())
                 .listener(new SavePersonListener.SavePersonStepExecutionListener())
-                .faultTolerant()
+                .faultTolerant()//스킵보다 반드시 먼저
                 .skip(NotFoundNameException.class)
                 .skipLimit(2)
                 .build();
@@ -84,6 +84,7 @@ public class SavePersonConfiguration {
 
         CompositeItemProcessor<Person, Person> itemProcessor = new CompositeItemProcessorBuilder<Person, Person>()
                 .delegates(new PersonValidationRetryProcessor(), validationProcessor, duplicateValidationProcessor)
+//                순서 지켜야 함
                 .build();
 
         itemProcessor.afterPropertiesSet();
