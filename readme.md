@@ -328,7 +328,30 @@ User40000 건 저장, ChunkSize 1000
 5. paraller
 
 --- 배포 실행
+파일 생성 경로를 변수로 받으 수 있게 생성
+1. public Step orderStatisticsStep 에  path 파람 추가, .writer(orderStatisticsItemWriter(date, path))
+2. orderStatisticsItemWriter 패스 파람 추가, .resource(new FileSystemResource(path + fileName))//패스 수정
+3. public Job userJob() 에 .to(this.orderStatisticsStep(null, null)) 추가
 
+./gradlew clean jar build -x test
+    메이븐 : maven-jar-plugin에서 mainClass 추가
+        mvn package -DskipTests
+        target에 생성 됨
+        실행 - java -jar target/aaa.jar
 
+생성경로
+    /build/libs
 
+실행
+    java -jar file.jar --job.name=userJob -date=2020-11 -path=/Users/test/
+        하위 파람은 대시 1개
+    
+젠킨스
+    잡생성 freeStyle
+    Build > ExcuteShell pwd 실행 콘솔에 경로 확인
+    github 연결
+    ExecuteShell > 
+        ./gradlew clean jar build -x test
+        java -jar build/libs/aaa.jar --job.name=userJob -data=2020-11 -path=/var/jenkins_home/workspace/userJobTest
+    
 

@@ -70,10 +70,12 @@ public class UserConfiguration {
                 .next(new JobParametersDecide("date"))
                 .on(JobParametersDecide.CONTINUE.getName())
                 .to(this.orderStatisticsStep(null, null))
+                //패스추가
                 .build()
                 .build();
     }
 
+    // 패스 추가
     @Bean(JOB_NAME + "_orderStatisticsStep")
     @JobScope
     public Step orderStatisticsStep(@Value("#{jobParameters[date]}") String date,
@@ -82,9 +84,11 @@ public class UserConfiguration {
                 .<OrderStatistics, OrderStatistics>chunk(CHUNK)
                 .reader(orderStatisticsItemReader(date))
                 .writer(orderStatisticsItemWriter(date, path))
+                // 패스 추가
                 .build();
     }
 
+    // 패스 추가
     private ItemWriter<? super OrderStatistics> orderStatisticsItemWriter(String date, String path) throws Exception {
         YearMonth yearMonth = YearMonth.parse(date);
         String fileName = yearMonth.getYear() + "년_" + yearMonth.getMonthValue() + "월_일별_주문_금액.csv";
@@ -98,6 +102,7 @@ public class UserConfiguration {
 
         FlatFileItemWriter<OrderStatistics> itemWriter = new FlatFileItemWriterBuilder<OrderStatistics>()
                 .resource(new FileSystemResource(path + fileName))
+                //패스 수정
                 .lineAggregator(lineAggregator)
                 .name(JOB_NAME + "_orderStatisticsItemWriter")
                 .encoding("UTF-8")
