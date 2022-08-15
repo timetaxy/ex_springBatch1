@@ -25,6 +25,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Level level = Level.NORMAL;
 
+    //async 변경 개선, getTotalAmount에서 항상 로딩하기 때문에 eager, 멀티쓰레드환경에서는 lazy 접근은 에러 가능성
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private List<Orders> orders;

@@ -233,7 +233,102 @@ JobParameterDecide 의 decide 매서드 통해 해당 조건에 따라 FlowExecu
     complete > 끝
     continue > 다음 .to 가 실행 됨
 
+--- 성능 개선
+
+코드 같더라도 고유한 이름의 빈 생성하기 위한 파라메터 화
+private final String JOB_NAME = "userJob";
+
+@Bean(JOB_NAME)
+public Job userJob() throws Exception {
+
+@Bean(JOB_NAME + "_orderStatisticsStep")
+
+--- async step
+아이템 프로세서와 라이터 기준으로 비동기처리
+
+사용하려면 스프링 배치 integration 의존성 추가해야 함
+<!-- https://mvnrepository.com/artifact/org.springframework.batch/spring-batch-integration -->
+<dependency>
+    <groupId>org.springframework.batch</groupId>
+    <artifactId>spring-batch-integration</artifactId>
+    <version>4.3.6</version>
+</dependency>
+
+processor 는 리더에서 받은 인풋을 자바 concurrent feature 로 래핑
+
+ItemReader 은 동일
+AsyncItemProcessor, AsyncItemWriter
+1. async 는 종료 안되는 경우가 있으므로, main에 System.exit  추가 필요
+
+2. application에 쓰레드풀 익스큐터 생성
+내가 커스텀한 빈을 먼저 사용하려면
+@Primary
+
+3. User 에서 fetch 전략 eager
+
+--- 멀티쓰레드 step
+정크기준으로 멀티쓰레드처리
+
+여러 쓰레드가 정크 단위로 동시 처하기 때문에 쓰레드 세이프한 아이템리더 필수
+    asyncStep 은 ItemProcessor, writer 만 비동기 처리
+페이징 기반은 쓰레드 세이프, 커서는 세이프 x
+jpa 페이지 아이템 리더 > 쓰레드 세이프
+
+스텝에서 추가
+.taskExecutor(this.taskExecutor)
+.throttleLimit(8)
+
+--- 파티션 스텝
+스텝기준으로 멀티쓰레드처리
+
+파티셔너 생성
+    max, min 위한 Repo 함수 생성
+    @Query(value = "select min(u.id) from User u")
+    long findMinId();
+
+성능 개선은 테스트로 실제 해봐야 알 수 있음
+
+1. 파티셔너의 파티션 매서드에서 각 그릴사이즈만큼의 스텝에서 사용될 범위의 민 맥스 구해서 익스큐션 컨텍스트를 맵에 담는다
+2. 슬레이브 스텝에서 실행될 때, 아이템리더에서 사용될 건데, 민 맥스로 조회 조건문 아이템 리더에 파람 추가
+3. 아이템리더 .queryString("select u from User u where u.id between :minId and :maxId"),  .parameterValues(parameters)
+4. 핸들러 생성 taskExecutorPartitionHandler
+5. 매니저 생성 userLevelUpManagerStep, 매니저에 핸들러 연결 .partitionHandler(taskExecutorPartitionHandler())
+6. 스텝에 매니저 연결, .next(this.userLevelUpManagerStep())
+7. async 튜닝, itemWriter itemReader async 로
+
+--- 패럴럴 스텝
+하나의 잡에 설정된 n개의 스텝을 병렬로 실행
+핵심 splitFlow
+스텝 자체를 동시실행 (멀티스레드-정크단위, 파티션 스텝은 스텝단위로 동시 실행)
+    스텝단위 인 것은 공통(패러럴,파티션)
+    파티션스텝: 하나의 마스터 스텝을 여러개 슬레이브로
+    패러럴 : 잡에 설정된 n개 병렬
+
+1. executer 멤버 추가
+2. saveUserFlow 구현, saveuserStep 수정해서 구현, flow로 랩핑 리턴
+3. userJob flow로 start 수정
+4. orderStatisticsStep bean, jobScope 어노테이션 제거 - splitflow가 잡스코프에서 파람을 받기 때문에 order stat~ flow를 생성하기 때문에
+5. orderStatisticsFlow 생성
+6. splitFlow 생성, // userLevelUpStep 과 orderStatFlow 를 하나의 flow 스텝으로 만듦, // flow로 합치려면 각각의 스텝도 flow 이어야 함
+7. job에 추가 .next(this.splitFlow(null))
+
+파티션 스텝 추가하기
+8. 파티션 참고 (아이템리더, 마스터스텝, 핸들러) 
+9.                 .start(userLevelUpManagerStep()) //                파티션으로 튜닝, 마스터 스텝 입력
+10. @Bean(JOB_NAME + "_userItemReader") 빈 이름 지정( 지정 않으면 매서드 명으로 빈 됨으로 )
+
+--- 튜닝 성능 비교
+User40000 건 저장, ChunkSize 1000
+생능개선 대상 : userLevelUpStep 
+성능 순위
+1. 멀티쓰레드
+2. partition
+3. async + partition
+4. partition + paraller
+5. paraller
+
+--- 배포 실행
 
 
--- 진행
-fc 2-4 04:15
+
+
