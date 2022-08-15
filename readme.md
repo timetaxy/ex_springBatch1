@@ -1,3 +1,4 @@
+--- FC BATCH
 
 run config
     create new config. application
