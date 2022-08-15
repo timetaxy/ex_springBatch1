@@ -1,5 +1,3 @@
-# FC
-https://github.com/woniper/fastcampus-spring-batch-example/
 
 run config
     create new config. application
@@ -354,5 +352,6 @@ User40000 건 저장, ChunkSize 1000
     ExecuteShell > 
         ./gradlew clean jar build -x test
         java -jar build/libs/aaa.jar --job.name=userJob -data=2020-11 -path=/var/jenkins_home/workspace/userJobTest
-    
 
+# FC
+https://github.com/woniper/fastcampus-spring-batch-example/
